@@ -6,7 +6,7 @@
  * 
  * @package Anderson C integracion plotly mapa dinamico
  * @subpackage wordpress php
- * @since esd V 1.0
+ * @since 
  */
 function MapsPruebasPlotly($atts, $content = null){
 	
