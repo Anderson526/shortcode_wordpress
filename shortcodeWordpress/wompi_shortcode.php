@@ -46,7 +46,7 @@ function btndonaciones()
 function pagoWompi($atts, $content = null)
 {
     ob_start();
-    $hash = hash("sha256", "sk8-438k4-xmxm392-sn2m2490000COPprod_integrity_Z5mMke9x0k8gpErbDqwrJXMqsI6SFli6"); //"37c8407747e595535433ef8f6a811d853cd943046624a0ec04662b17bbf33bf5"
+    $hash = hash("sha256", "codehash"); //"37c8407747e595535433ef8f6a811d853cd943046624a0ec04662b17bbf33bf5"
     ?>
 
     <form action="https://checkout.wompi.co/p/" method="GET" id="donationForm" style="
