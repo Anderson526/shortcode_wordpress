@@ -192,3 +192,69 @@ margin-left: 7%;
 }
 
 add_shortcode('pagoWompiShortcode', 'pagoWompi');
+
+
+function registerWompiDatabase()
+{
+
+    add_menu_page(
+        'Base de datos wompi',
+        'BD Wompi',
+        'manage_options',
+        'my_custom-page',
+        'my_custom_page_content',
+        'dashicons-admin-site',
+        6
+
+    );
+}
+
+add_action('admin_menu', 'registerWompiDatabase');
+
+function my_custom_page_content()
+{
+
+    global $wpdb;
+
+    $query = 'SELECT * FROM wp_wompiData';
+    $results = $wpdb->get_results($query);
+
+
+    echo '<div class="wrap">';
+    echo '<h1>Título de la Página</h1>';
+    echo '<table class="widefat fixed" cellspacing="0">';
+    echo '<thead><tr>';
+    echo '<th>Referencia</th>';
+    echo '<th>Nombre</th>';
+    echo '<th>Correo</th>';
+    echo '<th>Tipo documento</th>';
+    echo '<th>Documento</th>';
+    echo '<th>Metodo de pago</th>';
+    echo '<th>Valor de pago </th>';
+    echo '<th>Estado</th>';
+    echo '</tr></thead>';
+    echo '<tbody>';
+
+    if ($results) {
+        foreach ($results as $row) {
+            echo '<tr>';
+            echo '<td>' . esc_html($row->reference_sale) . '</td>';
+            echo '<td>' . esc_html($row->nombre) . '</td>';
+            echo '<td>' . esc_html($row->correo) . '</td>';
+            echo '<td>' . esc_html($row->tipo_documento) . '</td>';
+            echo '<td>' . esc_html($row->documento) . '</td>';
+            echo '<td>' . esc_html($row->payment_method_type) . '</td>';
+            echo '<td>' . esc_html($row->valorpagado) . '</td>';
+            echo '<td>' . esc_html($row->state_pol) . '</td>';
+
+
+            echo '</tr>';
+        }
+    } else {
+        echo '<tr><td colspan="3">No se encontraron resultados.</td></tr>';
+    }
+
+    echo '</tbody></table>';
+    echo '</div>';
+}
+
