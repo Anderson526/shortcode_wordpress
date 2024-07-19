@@ -1,5 +1,3 @@
-
-
 //shortcode wompi 
 
 add_shortcode('donacionesBoton', 'btndonaciones');
@@ -46,120 +44,98 @@ function btndonaciones()
 function pagoWompi($atts, $content = null)
 {
     ob_start();
-    $hash = hash("sha256", "codehash"); //"37c8407747e595535433ef8f6a811d853cd943046624a0ec04662b17bbf33bf5"
+    $signaturet = time();
+
+    $amountInCents = 500000; 
+    $currency = "COP";
+    $integritySecret = "prod_integrity_llave";
+
+
+    $hash = hash("sha256", $signaturet . $amountInCents . $currency . $integritySecret);
+
+
     ?>
-
-    <form action="https://checkout.wompi.co/p/" method="GET" id="donationForm" style="
-background: #e7e5e5;
-border-radius: 5%;
-padding: 40px;
-margin-left: 7%;
-">
-
-        <input type="hidden" name="public-key" value="pub_test_Q5yDA9xoKdePzhSGeVe9HAez7HgGORGf" tabindex="-1" />
+    <form action="https://checkout.wompi.co/p/" method="GET" id="donationForm" style="background: #e7e5e5; border-radius: 5%; padding: 40px; margin-left: 7%;">
+        <input type="hidden" name="public-key" value="pub_prod_llave" tabindex="-1" />
         <input type="hidden" name="currency" value="COP" tabindex="-1" />
         <input type="hidden" id="amount-in-cents" name="amount-in-cents" value="" tabindex="-1" />
         <input type="hidden" id="amount" name="amount" value="" tabindex="-1" />
-        <input type="hidden" name="reference" value="<?php echo time(); ?>" tabindex="-1" />
-        <input type="hidden" id="signature-integrity" name="signature-integrity" value="<?php echo $hash; ?>"
-            tabindex="-1" />
+        <input type="hidden" name="reference" value="<?php echo $signaturet; ?>" tabindex="-1" />
+        <input type="hidden" id="signature-integrity" name="signature-integrity" value="<?php echo $hash; ?>" tabindex="-1" />
         <input type="hidden" id="redirect-url" name="redirect-url" value="" tabindex="-1" />
 
+        <p><strong>Selecciona el monto de la donación:</strong></p>
+        <input type="radio" name="donvalue" value="5000"><label class="ml-2">$5.000</label><br>
+        <input type="radio" name="donvalue" value="10000"><label class="ml-2">$10.000</label><br>
+        <input type="radio" name="donvalue" value="20000"><label class="ml-2">$20.000</label><br>
+        <input type="radio" name="donvalue" value="50000"><label class="ml-2">$50.000</label><br>
+        <input type="radio" name="donvalue" value="100000"><label class="ml-2">$100.000</label><br>
 
-        <p><strong>Seleccione el monto de la donación:</strong></p>
-
-        <input type="radio" id="" name="donvalue" value="5000">
-        <label class="ml-2">$5.000</label><br>
-
-        <input type="radio" id="" name="donvalue" value="10000">
-        <label class="ml-2">$10.000</label><br>
-
-        <input type="radio" id="" name="donvalue" value="20000">
-        <label class="ml-2">$20.000</label><br>
-
-        <input type="radio" id="" name="donvalue" value="50000">
-        <label class="ml-2">$50.000</label><br>
-
-        <input type="radio" id="" name="donvalue" value="100000">
-        <label class="ml-2">$100.000</label><br>
-
-        <!-- Button trigger modal -->
-        <button type="button" style="border: 0px transparent;
-    margin-top: 20px;" class="btn btn-primary" id="submitButton" onclick="validateAmount();">
-            <img style="width: 15%;
-    margin-right: 15px;"
-                src="https://www.ens.org.co/wp-content/uploads/2024/07/photo_2024-07-16_09-04-08-removebg-preview-1.png">
-            Quiero donar
+        <button type="button" style="border: 0px transparent; margin-top: 20px;" class="btn btn-primary" id="submitButton" onclick="validateAmount();">
+            <img style="width: 15%; margin-right: 15px;" src="https://www.ens.org.co/wp-content/uploads/2024/07/photo_2024-07-16_09-04-08-removebg-preview-1.png"> Quiero donar
         </button>
+        <small id="helptext"></small>
 
-        <!-- Modal -->
         <div class="modal fade" id="quieroDonar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-body form-group">
-                        <h2 class="mt-4">Muchas gracias por tu interes</h2>
+                        <h2 class="mt-4">Muchas gracias por tu interés</h2>
                         <p><strong id="text-amount"></strong></p>
-                        <p><strong>Tu aporte contribuye a mejorar las condiciones laborales de trabajadoras y trabajadores
-                                colombianos</strong></p>
+                        <p><strong>Tu aporte contribuye a mejorar las condiciones laborales de trabajadoras y trabajadores colombianos</strong></p>
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <label for="">Nombre y apellido</label>
+                                <label>Nombre y apellido</label>
                                 <input type="text" class="form-control" id="name" name="customer-data:full-name" required>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="">Correo electrónico</label>
-                                <input type="text" id="email" class="form-control" name="customer-data:email" required>
+                                <label>Correo electrónico</label>
+                                <input type="email" id="email" class="form-control" name="customer-data:email" required>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="">Selecione el tipo de documento</label>
+                                <label>Seleccione el tipo de documento</label>
                                 <select class="form-control" id="tipdoc" name="customer-data:legal-id-type" required>
                                     <option value="TI">Documento identidad</option>
-                                    <option value="CC">Cedula ciudadania</option>
-                                    <option value="NIT">Nit </option>
-                                    <option value="CE">Cedula de extrangeria</option>
+                                    <option value="CC">Cédula ciudadanía</option>
+                                    <option value="NIT">Nit</option>
+                                    <option value="CE">Cédula de extranjería</option>
                                 </select>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="">Numero de documento</label>
+                                <label>Número de documento</label>
                                 <input class="form-control" id="doc" type="number" name="customer-data:legal-id" required>
                             </div>
                         </div>
                     </div>
                     <div class="d-flex justify-content-end m-4">
-                        <button type="submit" class="btn btn-secondary" onclick="sendPay();" id="btnEnviar">Realizar la
-                            donación</button>
+                        <button type="button" class="btn btn-secondary" onclick="sendPay();">Realizar la donación</button>
                     </div>
                 </div>
             </div>
         </div>
-
     </form>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            validateAmount();
+            validatefirst();
             var radioButtons = document.querySelectorAll('input[type="radio"][name="donvalue"]');
 
             radioButtons.forEach(function (radioButton) {
                 radioButton.addEventListener('change', function () {
                     if (this.checked) {
                         var valueDonacion = this.value;
-                        console.log(valueDonacion);
                         document.querySelector("#amount-in-cents").value = valueDonacion + "00";
                         document.querySelector("#amount").value = valueDonacion;
                         document.querySelector("#text-amount").textContent = "El monto seleccionado es: $" + valueDonacion;
-
-
                     }
                 });
             });
         });
 
-
-
-        function validateAmount() {
+        function validatefirst() {
             var radioButtons = document.querySelectorAll('input[type="radio"][name="donvalue"]');
             var submitButton = document.getElementById('submitButton');
+
             radioButtons.forEach(function (radioButton) {
                 radioButton.addEventListener('change', function () {
                     if (this.checked) {
@@ -173,6 +149,28 @@ margin-left: 7%;
             });
         }
 
+        function validateAmount() {
+            var radioButtons = document.querySelectorAll('input[type="radio"][name="donvalue"]');
+            var submitButton = document.getElementById('submitButton');
+            var selected = false;
+            let helpText = document.querySelector('#helptext');
+
+            radioButtons.forEach(function (radioButton) {
+                if (radioButton.checked) {
+                    selected = true;
+                }
+            });
+
+            if (selected) {
+                helpText.textContent = ' ';
+                submitButton.setAttribute('data-toggle', 'modal');
+                submitButton.setAttribute('data-target', '#quieroDonar');
+            } else {
+                helpText.textContent = 'Recuerda seleccionar un monto para la donación';
+                submitButton.removeAttribute('data-toggle', 'modal');
+                submitButton.removeAttribute('data-target', '#quieroDonar');
+            }
+        }
 
         function sendPay() {
             let nombre = document.querySelector("#name").value;
@@ -182,9 +180,8 @@ margin-left: 7%;
             var url1 = "https://www.ens.org.co/wompi/intoTable.php?nombre=" + nombre + "&email=" + email + "&tipdoc=" + tipdoc + "&doc=" + doc;
             let encoded = encodeURI(url1);
             document.querySelector("#redirect-url").value = encoded;
+            document.getElementById('donationForm').submit();
         }
-
-
     </script>
     <?php
     wp_reset_postdata();
